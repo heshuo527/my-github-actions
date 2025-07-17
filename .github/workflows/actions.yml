@@ -1,40 +1,56 @@
+# 本次执行的名称
 name: CI/CD for React App
+# 权限
 permissions:
   contents: write  # 允许写入仓库内容（如创建和推送分支）
-  pages: write    # 允许部署到 GitHub Pages
+  pages: write    # 允许部署到 GitHub Pages 
+# 触发条件
 on:
   push:
     branches:
       - main
+# 任务
 jobs:
+  # 构建
   build:
+    # 运行环境
     runs-on: ubuntu-latest
     steps:
+      # 检出代码
       - name: Checkout Code
         uses: actions/checkout@v4
+      # 设置 Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18.x'
+      # 安装依赖
       - name: Install Dependencies
         run: npm install
+      # 构建项目
       - name: Build Project
         run: npm run build
+      # 上传构建产物
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: production-files
           path: ./build
           if-no-files-found: error
+  # 部署
   deploy:
+    # 依赖
     needs: build
+    # 运行环境
     runs-on: ubuntu-latest
     steps:
+      # 下载构建产物
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
           name: production-files
           path: ./build
+      # 部署到 GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
