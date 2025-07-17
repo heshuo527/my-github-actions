@@ -1,4 +1,7 @@
 name: CI/CD for React App
+permissions:
+  contents: write  # 允许写入仓库内容（如创建和推送分支）
+  pages: write    # 允许部署到 GitHub Pages
 on:
   push:
     branches:
