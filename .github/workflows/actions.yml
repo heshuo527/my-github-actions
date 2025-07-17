@@ -1,0 +1,56 @@
+name: CI/CD for React App
+
+# 触发工作流的事件
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # 构建任务
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 检出代码
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # 设置 Node.js 环境
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      # 安装依赖
+      - name: Install Dependencies
+        run: npm install
+
+      # 构建项目
+      - name: Build Project
+        run: npm run build
+
+      # 上传构建产物
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: production-files
+          path: ./build
+
+  # 部署任务
+  deploy:
+    needs: build # 依赖于 build 任务
+    runs-on: ubuntu-latest
+    steps:
+      # 下载构建产物
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: production-files
+          path: ./build
+
+      # 部署到 GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build

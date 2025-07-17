@@ -1,6 +1,7 @@
 {
   "name": "my-github-actions",
   "version": "0.1.0",
+  "homepage": "https://heshuo527.github.io/my-github-actions",
   "private": true,
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
