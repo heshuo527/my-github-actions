@@ -17,11 +17,8 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        {/* 标题 */}
         <div>要开心哦！！！当前时间：{new Date().toLocaleString()}</div>
-        {/* 显示当前表情 */}
         <div style={{ fontSize: '5rem', margin: '20px' }}>{emoji}</div>
-        {/* 交互按钮 */}
         <button onClick={handleClick} style={{ fontSize: '1.2rem', padding: '10px 20px', cursor: 'pointer' }}>
           随机表情
         </button>
