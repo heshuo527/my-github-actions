@@ -3,7 +3,7 @@ name: CI/CD for React App
 
 # 定义权限，确保 Actions 有权操作仓库和部署 Pages
 permissions:
-  contents: write    # 允许写入代码和分支（如推送 gh-pages）
+  contents: write    # 允许写入代码和分支
   pages: write      # 允许部署到 GitHub Pages
   id-token: write   # 验证身份，部署 Pages 必需
 
@@ -38,12 +38,16 @@ jobs:
       - name: Build Project
         run: npm run build  # 运行 npm run build 生成 build 目录
 
-      # 步骤 5：上传构建产物
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4  # 使用官方 Action 上传构建产物
+      # 步骤 5：调试构建产物（可选，确认文件存在）
+      - name: Debug Build Files
+        run: ls -la ./dist  # 列出 build 目录内容，确保有 index.html
+
+      # 步骤 6：上传构建产物为 Pages artifact
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3  # 使用专为 Pages 的 Action
         with:
-          name: production-files  # artifact 名称
-          path: ./dist  # 上传 build 目录
+          name: github-pages  # artifact 名称必须为 github-pages
+          path: ./dist  # 上传 React 的 build 目录
           if-no-files-found: error  # 如果路径无文件，报错
 
   # 部署任务
@@ -54,14 +58,7 @@ jobs:
       name: github-pages  # 指定 GitHub Pages 环境
       url: ${{ steps.deployment.outputs.page_url }}  # 部署后生成的 URL
     steps:
-      # 步骤 1：下载构建产物
-      - name: Download Artifact
-        uses: actions/download-artifact@v4  # 下载 artifact
-        with:
-          name: production-files  # 匹配 build 任务的 artifact 名称
-          path: ./dist  # 下载到 build 目录
-
-      # 步骤 2：部署到 GitHub Pages
+      # 步骤 1：部署到 GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment  # 设置 ID 以获取 page_url
         uses: actions/deploy-pages@v4  # 使用官方 Action 部署到 Pages
