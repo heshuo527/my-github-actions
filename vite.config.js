@@ -9,7 +9,7 @@ export default defineConfig({
     include: /src\/.*\.jsx?$/,
   },
   build: {
-    outDir: 'dist',
+    outDir: 'build',
     assetsDir: 'assets',
     emptyOutDir: true,
     rollupOptions: {

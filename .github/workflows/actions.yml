@@ -40,14 +40,14 @@ jobs:
 
       # 步骤 5：调试构建产物（可选，确认文件存在）
       - name: Debug Build Files
-        run: ls -la ./dist  # 列出 build 目录内容，确保有 index.html
+        run: ls -la ./build  # 列出 build 目录内容，确保有 index.html
 
       # 步骤 6：上传构建产物为 Pages artifact
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3  # 使用专为 Pages 的 Action
         with:
           name: github-pages  # artifact 名称必须为 github-pages
-          path: ./dist  # 上传 React 的 build 目录
+          path: ./build  # 上传 React 的 build 目录
           if-no-files-found: error  # 如果路径无文件，报错
 
   # 部署任务
