@@ -1,50 +1,67 @@
-# 本次执行的名称
+# Workflow 名称，显示在 GitHub Actions 界面
 name: CI/CD for React App
-# 权限
+
+# 定义权限，确保 Actions 有权操作仓库和部署 Pages
 permissions:
-  contents: write  # 允许写入仓库内容（如创建和推送分支）
-  pages: write    # 允许部署到 GitHub Pages 
-# 触发条件
+  contents: write    # 允许写入代码和分支（如推送 gh-pages）
+  pages: write      # 允许部署到 GitHub Pages
+  id-token: write   # 验证身份，部署 Pages 必需
+
+# 定义触发事件
 on:
   push:
     branches:
-      - main
-# 任务
+      - main        # 推送到 main 分支时触发
+  workflow_dispatch: # 支持手动触发，类似 Jenkins 的“Build Now”
+
+# 定义任务
 jobs:
-  # 构建
+  # 构建任务
   build:
-    # 运行环境
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 在最新的 Ubuntu 虚拟机上运行
     steps:
-      # 检出代码
+      # 步骤 1：检出代码
       - name: Checkout Code
-        uses: actions/checkout@v4
-      # 设置 Node.js
+        uses: actions/checkout@v4  # 使用官方 Action 拉取仓库代码
+
+      # 步骤 2：设置 Node.js 环境
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4  # 安装指定版本的 Node.js
         with:
-          node-version: '18.x'
-      # 上传构建产物
+          node-version: '18.x'  # 使用 Node.js 18.x
+
+      # 步骤 3：安装项目依赖
+      - name: Install Dependencies
+        run: npm install  # 运行 npm install 安装 package.json 里的依赖
+
+      # 步骤 4：构建项目
+      - name: Build Project
+        run: npm run build  # 运行 npm run build 生成 build 目录
+
+      # 步骤 5：上传构建产物
       - name: Upload Artifact
-        run: npm install
+        uses: actions/upload-artifact@v4  # 使用官方 Action 上传构建产物
         with:
-          name: production-files
-  # 部署
+          name: production-files  # artifact 名称
+          path: ./dist  # 上传 build 目录
+          if-no-files-found: error  # 如果路径无文件，报错
+
+  # 部署任务
   deploy:
-    # 依赖
-    needs: build
-    # 运行环境
-    runs-on: ubuntu-latest
+    needs: build  # 依赖 build 任务
+    runs-on: ubuntu-latest  # 在 Ubuntu 虚拟机上运行
+    environment:
+      name: github-pages  # 指定 GitHub Pages 环境
+      url: ${{ steps.deployment.outputs.page_url }}  # 部署后生成的 URL
     steps:
-      # 下载构建产物
+      # 步骤 1：下载构建产物
       - name: Download Artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4  # 下载 artifact
         with:
-          name: production-files
-          path: ./dist
-      # 部署到 GitHub Pages
+          name: production-files  # 匹配 build 任务的 artifact 名称
+          path: ./dist  # 下载到 build 目录
+
+      # 步骤 2：部署到 GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+        id: deployment  # 设置 ID 以获取 page_url
+        uses: actions/deploy-pages@v4  # 使用官方 Action 部署到 Pages
