@@ -1,28 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
-// 表情数组，后续可扩展
-const EMOJIS = ['😀', '😂', '🥳', '😎', '🤩', '😜', '🤔', '🥶', '😱', '👻', '🐶', '🐱', '🐼', '🦄', '🍕', '🍔', '🍟', '🍉', '🍓', '🍺'];
-
 function App() {
-  // 用于保存当前显示的表情
-  const [emoji, setEmoji] = useState('😀');
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [nickname, setNickname] = useState('');
+  const ws = useRef(null);
 
-  // 点击按钮时随机选择一个表情
-  const handleClick = () => {
-    const randomIndex = Math.floor(Math.random() * EMOJIS.length);
-    setEmoji(EMOJIS[randomIndex]);
+  useEffect(() => {
+    // 根据环境选择 WebSocket 地址
+    const wsUrl = import.meta.env.DEV ? `ws://${window.location.host}/ws` : `wss://${window.location.host}/ws`;
+    ws.current = new WebSocket(wsUrl);
+
+    ws.current.onopen = () => {
+      console.log('WebSocket 连接已打开');
+    };
+
+    ws.current.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      setMessages((prevMessages) => [...prevMessages, message]);
+    };
+
+    ws.current.onclose = () => {
+      console.log('WebSocket 连接已关闭');
+    };
+
+    ws.current.onerror = (error) => {
+      console.error('WebSocket 出错: ', error);
+    };
+
+    // 组件卸载时关闭连接
+    return () => {
+      ws.current.close();
+    };
+  }, []);
+
+  const sendMessage = () => {
+    if (input.trim() && nickname.trim() && ws.current && ws.current.readyState === WebSocket.OPEN) {
+      const message = {
+        nickname,
+        content: input,
+      };
+      ws.current.send(JSON.stringify(message));
+      setInput('');
+    }
   };
 
   return (
     <div className="App">
-      <header className="App-header">
-        <div>要开心哦！！！当前时间：{new Date().toLocaleString()}</div>
-        <div style={{ fontSize: '5rem', margin: '20px' }}>{emoji}</div>
-        <button onClick={handleClick} style={{ fontSize: '1.2rem', padding: '10px 20px', cursor: 'pointer' }}>
-          随机表情
-        </button>
-      </header>
+      <h1>WebSocket 聊天室</h1>
+      <div className="nickname-area">
+        <input
+          type="text"
+          placeholder="输入你的昵称"
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+        />
+      </div>
+      <div className="messages">
+        {messages.map((msg, index) => (
+          <div key={index} className="message">
+            <strong>{msg.nickname}:</strong> {msg.content}
+          </div>
+        ))}
+      </div>
+      <div className="input-area">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+        />
+        <button onClick={sendMessage}>发送</button>
+      </div>
     </div>
   );
 }

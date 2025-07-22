@@ -20,6 +20,11 @@ export default defineConfig({
   },
   server: {
     port: 3333, // 匹配你的 .env 配置
+    proxy: {
+      '/ws': {
+        target: 'ws://localhost:3000',
+        ws: true,
+      },
+    },
   },
-  base: '/my-github-actions/',
 });
