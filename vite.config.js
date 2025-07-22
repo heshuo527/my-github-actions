@@ -21,11 +21,15 @@ export default defineConfig({
   },
   server: {
     port: 3333, // 匹配你的 .env 配置
+    host: '0.0.0.0', // 开放所有网络接口
     proxy: {
       '/ws': {
         target: 'ws://localhost:3000',
         ws: true,
       },
     },
+  },
+  define: {
+    'import.meta.env.VITE_WS_URL': JSON.stringify(process.env.VITE_WS_URL || 'wss://my-backend.onrender.com/ws'),
   },
 });

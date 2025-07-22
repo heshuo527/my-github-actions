@@ -35,6 +35,7 @@ function App() {
     };
   }, []);
 
+  // 发送消息
   const sendMessage = () => {
     if (input.trim() && nickname.trim() && ws.current && ws.current.readyState === WebSocket.OPEN) {
       const message = {
@@ -48,15 +49,19 @@ function App() {
 
   return (
     <div className="App">
-      <h1>WebSocket 聊天室</h1>
+      {/* 标题 */}
+      <h1>研发 聊天室</h1>
+      {/* 昵称输入区 */}
       <div className="nickname-area">
         <input
           type="text"
           placeholder="输入你的昵称"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
+          maxLength={16}
         />
       </div>
+      {/* 消息显示区 */}
       <div className="messages">
         {messages.map((msg, index) => (
           <div key={index} className="message">
@@ -64,12 +69,15 @@ function App() {
           </div>
         ))}
       </div>
+      {/* 输入区 */}
       <div className="input-area">
         <input
           type="text"
           value={input}
+          placeholder="输入聊天内容，回车或点击发送"
           onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+          onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+          maxLength={200}
         />
         <button onClick={sendMessage}>发送</button>
       </div>

@@ -1,38 +1,116 @@
+/* 聊天室主容器，居中显示，卡片风格 */
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
   min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: flex-start;
+  padding-top: 40px;
+  font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
 }
 
-.App-link {
-  color: #61dafb;
+/* 标题样式 */
+.App h1 {
+  font-size: 2.2rem;
+  color: #4f46e5;
+  margin-bottom: 24px;
+  letter-spacing: 2px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* 昵称输入区 */
+.nickname-area {
+  margin-bottom: 16px;
+}
+.nickname-area input {
+  padding: 8px 16px;
+  border: 1.5px solid #a5b4fc;
+  border-radius: 20px;
+  outline: none;
+  font-size: 1rem;
+  transition: border 0.2s;
+  background: #fff;
+}
+.nickname-area input:focus {
+  border: 1.5px solid #6366f1;
+}
+
+/* 消息区卡片 */
+.messages {
+  width: 100%;
+  max-width: 420px;
+  min-height: 320px;
+  max-height: 420px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px 0 rgba(80, 112, 255, 0.08);
+  padding: 20px 18px 12px 18px;
+  margin-bottom: 18px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 单条消息样式 */
+.message {
+  text-align: left;
+  padding: 8px 12px;
+  background: #f1f5ff;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px 0 rgba(80, 112, 255, 0.04);
+  word-break: break-all;
+}
+.message strong {
+  color: #6366f1;
+  margin-right: 6px;
+}
+
+/* 输入区 */
+.input-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 420px;
+}
+.input-area input {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1.5px solid #a5b4fc;
+  border-radius: 20px;
+  font-size: 1rem;
+  outline: none;
+  background: #fff;
+  transition: border 0.2s;
+}
+.input-area input:focus {
+  border: 1.5px solid #6366f1;
+}
+
+/* 发送按钮 */
+.input-area button {
+  padding: 10px 22px;
+  background: linear-gradient(90deg, #6366f1 0%, #818cf8 100%);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(99, 102, 241, 0.10);
+  transition: background 0.2s, transform 0.1s;
+}
+.input-area button:hover {
+  background: linear-gradient(90deg, #818cf8 0%, #6366f1 100%);
+  transform: translateY(-2px) scale(1.04);
+}
+
+/* 滚动条美化 */
+.messages::-webkit-scrollbar {
+  width: 6px;
+}
+.messages::-webkit-scrollbar-thumb {
+  background: #e0e7ff;
+  border-radius: 6px;
 }
