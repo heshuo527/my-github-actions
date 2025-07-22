@@ -4,6 +4,7 @@ import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  base: '/my-github-actions/', 
   esbuild: {
     loader: 'jsx',
     include: /src\/.*\.jsx?$/,

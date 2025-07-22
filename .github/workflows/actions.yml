@@ -1,7 +1,7 @@
-# Workflow 名称，显示在 GitHub Actions 界面
+# Workflow 名称
 name: CI/CD for React App
 
-# 定义权限，确保 Actions 有权操作仓库和部署 Pages
+# 定义权限
 permissions:
   contents: write    # 允许写入代码和分支
   pages: write      # 允许部署到 GitHub Pages
@@ -11,54 +11,54 @@ permissions:
 on:
   push:
     branches:
-      - main        # 推送到 main 分支时触发
-  workflow_dispatch: # 支持手动触发，类似 Jenkins 的“Build Now”
+      - main        # 推送到 main 分支触发
+  workflow_dispatch: # 支持手动触发
 
 # 定义任务
 jobs:
   # 构建任务
   build:
-    runs-on: ubuntu-latest  # 在最新的 Ubuntu 虚拟机上运行
+    runs-on: ubuntu-latest  # 在 Ubuntu 虚拟机上运行
     steps:
       # 步骤 1：检出代码
       - name: Checkout Code
-        uses: actions/checkout@v4  # 使用官方 Action 拉取仓库代码
+        uses: actions/checkout@v4  # 拉取仓库代码
 
       # 步骤 2：设置 Node.js 环境
       - name: Setup Node.js
-        uses: actions/setup-node@v4  # 安装指定版本的 Node.js
+        uses: actions/setup-node@v4  # 安装 Node.js
         with:
           node-version: '18.x'  # 使用 Node.js 18.x
 
       # 步骤 3：安装项目依赖
       - name: Install Dependencies
-        run: npm install  # 运行 npm install 安装 package.json 里的依赖
+        run: npm install  # 安装 package.json 的依赖
 
       # 步骤 4：构建项目
       - name: Build Project
-        run: npm run build  # 运行 npm run build 生成 build 目录
+        run: npm run build  # 生成 build 目录
 
-      # 步骤 5：调试构建产物（可选，确认文件存在）
+      # 步骤 5：调试构建产物
       - name: Debug Build Files
-        run: ls -la ./build  # 列出 build 目录内容，确保有 index.html
+        run: ls -la ./build && ls -la ./build/assets  # 确认 build 和 assets 目录内容
 
-      # 步骤 6：上传构建产物为 Pages artifact
+      # 步骤 6：上传 Pages artifact
       - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3  # 使用专为 Pages 的 Action
+        uses: actions/upload-pages-artifact@v3  # 专为 Pages 的 Action
         with:
           name: github-pages  # artifact 名称必须为 github-pages
-          path: ./build  # 上传 React 的 build 目录
+          path: ./build  # 上传 build 目录（包含 assets）
           if-no-files-found: error  # 如果路径无文件，报错
 
   # 部署任务
   deploy:
     needs: build  # 依赖 build 任务
-    runs-on: ubuntu-latest  # 在 Ubuntu 虚拟机上运行
+    runs-on: ubuntu-latest
     environment:
-      name: github-pages  # 指定 GitHub Pages 环境
-      url: ${{ steps.deployment.outputs.page_url }}  # 部署后生成的 URL
+      name: github-pages  # Pages 环境
+      url: ${{ steps.deployment.outputs.page_url }}  # 部署后的 URL
     steps:
       # 步骤 1：部署到 GitHub Pages
       - name: Deploy to GitHub Pages
-        id: deployment  # 设置 ID 以获取 page_url
-        uses: actions/deploy-pages@v4  # 使用官方 Action 部署到 Pages
+        id: deployment
+        uses: actions/deploy-pages@v4  # 部署到 Pages
