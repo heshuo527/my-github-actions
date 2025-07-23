@@ -54,12 +54,30 @@
 
 /* 单条消息样式 */
 .message {
-  text-align: left;
+  display: flex;
+  flex-direction: column;
+  margin: 8px 0;
+  max-width: 70%;
   padding: 8px 12px;
-  background: #f1f5ff;
-  border-radius: 12px;
-  box-shadow: 0 1px 4px 0 rgba(80, 112, 255, 0.04);
-  word-break: break-all;
+  border-radius: 8px;
+  background: #f1f1f1;
+}
+
+.message.self {
+  align-self: flex-end;
+  background: #d1e7dd;
+  text-align: right;
+}
+.message.self strong,
+.message.self .time {
+  text-align: right;
+  display: block;
+}
+
+.message.other {
+  align-self: flex-start;
+  background: #f1f1f1;
+  text-align: left;
 }
 .message strong {
   color: #6366f1;
@@ -113,4 +131,8 @@
 .messages::-webkit-scrollbar-thumb {
   background: #e0e7ff;
   border-radius: 6px;
+}
+.time {
+  font-size: 0.8rem;
+  color: #666;
 }
