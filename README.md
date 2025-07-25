@@ -7,7 +7,6 @@ TODO 1
 TODO 2
 create-react-app 创建的项目迁移到vite ✅
 
-TODO 3
 启动项目
 pnpm install  安装依赖
 pnpm dev 启动项目
